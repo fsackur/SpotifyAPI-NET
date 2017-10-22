@@ -4,8 +4,9 @@ using namespace SpotifyAPI.Local.Enums
 using namespace SpotifyAPI.Local.Models
 Add-Type -Path C:\dev\SpotifyAPI-NET\SpotifyAPI.Example\bin\Debug\SpotifyAPI.dll
 
+Update-FormatData Spotify.Format.ps1xml
 
-if (-not $Spotify) {
+if (-not $SpotifyLocal) {
     if (-not [SpotifyLocalAPI]::IsSpotifyRunning()) {
         throw "Spotify is not running"
     }
@@ -19,11 +20,11 @@ if (-not $Spotify) {
     $ApiConfig = [SpotifyLocalAPIConfig]::new()
     $ApiConfig.Port = $Listening.LocalPort
     $ApiConfig.HostUrl = "https://$($Listening.LocalAddress)"
-    $Global:Spotify = New-Object SpotifyLocalAPI ($ApiConfig)
-    if (-not $Spotify.Connect()) {
+    $Global:SpotifyLocal = New-Object SpotifyLocalAPI ($ApiConfig)
+    if (-not $SpotifyLocal.Connect()) {
         $ApiConfig.HostUrl = "http://$($Listening.LocalAddress)"
-        $Global:Spotify = New-Object SpotifyLocalAPI ($ApiConfig)
-        if (-not $Spotify.Connect()) {
+        $Global:SpotifyLocal = New-Object SpotifyLocalAPI ($ApiConfig)
+        if (-not $SpotifyLocal.Connect()) {
             throw "Failed to connect to local Spotify instance"
         }
     }
@@ -31,13 +32,17 @@ if (-not $Spotify) {
 }
 
 function Play-Track {
-    $null = $Spotify.Play()
+    $null = $SpotifyLocal.Play()
 }
 
 function Pause-Track {
-    $null = $Spotify.Pause()
+    $null = $SpotifyLocal.Pause()
 }
 
 function Get-Track {
-    $Spotify.GetStatus().Track
+    $Track = $SpotifyLocal.GetStatus().Track
+    $Track | 
+        Add-Member -MemberType ScriptProperty -Name Track -Value {$this.TrackResource.Name} -PassThru | 
+        Add-Member -MemberType ScriptProperty -Name Artist -Value {$this.ArtistResource.Name} -PassThru | 
+        Add-Member -MemberType ScriptProperty -Name Album -Value {$this.AlbumResource.Name} -PassThru
 }
