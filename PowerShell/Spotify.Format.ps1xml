@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<!-- *******************************************************************
+Formatting for results from the Spotify API client
+https://github.com/JohnnyCrazy/SpotifyAPI-NET
+******************************************************************** -->
+
+<Configuration>
+    <SelectionSets>
+        <SelectionSet>
+            <Name>SpotifyTrack</Name>
+            <Types>
+                <TypeName>SpotifyAPI.Local.Models.Track</TypeName>
+            </Types>
+        </SelectionSet>
+    </SelectionSets>
+   
+    <!-- ################ VIEW DEFINITIONS ################ -->
+
+    <ViewDefinitions>
+       <View>
+            <Name>SpotifyTrack</Name>
+            <ViewSelectedBy>
+                <SelectionSetName>SpotifyTrack</SelectionSetName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                   <TableColumnHeader>
+                      <Label>Track</Label>
+                      <Alignment>left</Alignment>
+                   </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>Artist</Label>
+                        <Alignment>left</Alignment>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>Length</Label>
+                        <Alignment>right</Alignment>
+                    </TableColumnHeader>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <Wrap/>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Track</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Artist</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>
+                                    [String]::Format("{0}:{1}", [Math]::Floor(($_.Length /60)), ($_.Length % 60))
+                           	    </ScriptBlock>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+    </ViewDefinitions>
+</Configuration>
